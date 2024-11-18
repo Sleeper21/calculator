@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="calculator">
+        <div class="input-display">
+            <h3 id="display-history" class="display-histoy small hidden"></h3> 
+            <h4 id="display" class="display">0</h4>
+        </div>
+
+        <div class="input-pad">            
+            <button id = "backspace-btn" class="btn special-btn span"> <img src="/images/backspace.svg" class="backspace-icon" alt="backspace"> </button>  
+            <button id = "ac-btn" class="btn special-btn">AC</button>
+            <button data-operator="*" class="btn special-btn">*</button> 
+            <button data = "number" class="btn regular-btn">7</button>   
+            <button data = "number" class="btn regular-btn">8</button>   
+            <button data = "number" class="btn regular-btn">9</button>   
+            <button data-operator="/" class="btn special-btn">/</button> 
+            <button data = "number" class="btn regular-btn">4</button>   
+            <button data = "number" class="btn regular-btn">5</button>   
+            <button data = "number" class="btn regular-btn">6</button>   
+            <button data-operator="-" class="btn special-btn">-</button> 
+            <button data = "number" class="btn regular-btn">1</button>   
+            <button data = "number" class="btn regular-btn">2</button>   
+            <button data = "number" class="btn regular-btn">3</button>   
+            <button data-operator="+" class="btn special-btn">+</button> 
+            <button data = "number" class="btn regular-btn span">0</button>   
+            <button data = "number" class="btn regular-btn">.</button> 
+            <button data-operator="=" class="btn special-btn">=</button>
+        </div>
+        
+    </div>
+
+    <script src="index.js"></script>
+</body>
+</html>
