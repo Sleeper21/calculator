@@ -10,12 +10,6 @@ const backspaceBtn = document.getElementById("backspace-btn");
 const operatorsElementList = document.querySelectorAll('button[data-operator]');
 const equals = document.getElementById("equals");
 
-let lastSpot = (displayElem.innerHTML.length) - 1;
-
-
-//console.log(displayElem.innerHTML)
-//console.log(historyDisplay.innerHTML.length)
-
 //// Store a list of all operators
 operatorsElementList.forEach(element => {
     const dataOperatorValue = element.getAttribute("data-operator");
@@ -24,15 +18,8 @@ operatorsElementList.forEach(element => {
 
 
 /////////// Functions
-function startDisplay(pressedButton){ 
-    displayElem.innerHTML = displayElem.innerHTML.slice(0, lastSpot) + pressedButton + displayElem.innerHTML.slice(lastSpot);
-
-}
-
 function addDigitToDisplay(pressedButton){
-    let display = displayElem.innerHTML;
-
-    displayElem.innerHTML = display.slice(0, (lastSpot + display.length)) + pressedButton + display.slice(display.length);
+    displayElem.innerHTML += pressedButton;
 }
 
 
@@ -46,10 +33,11 @@ numberBtnList.forEach(button => {
 
         if(displayElem.innerHTML === "0" && dataValue != "0" && dataValue != "."){
             displayElem.innerHTML = "";
-            startDisplay(dataValue);
-            //console.log(displayElem.innerHTML)
+            addDigitToDisplay(dataValue);
 
-        } else if (displayElem.innerHTML === "0" && dataValue === "0"){
+        } else if ( displayElem.innerHTML === "0" && dataValue === "0" ) {
+            displayElem.innerHTML = 0;
+        } else if (displayElem.innerHTML === "0" && dataValue === "0" && historyDisplay.innerHTML.length === 0){
             clearDisplay();
         
            // handle if inserted "." and result is not on screen 
@@ -59,22 +47,18 @@ numberBtnList.forEach(button => {
 
             // handle if inserted "." on top of the result           
         } else if (dataValue == "." && displayElem.innerHTML === historyDisplay.innerHTML) {
-            console.log(displayElem.innerHTML)
-            console.log(historyDisplay.innerHTML)
             clearDisplay();
             displayElem.innerHTML = "";
-            startDisplay(dataValue);
+            addDigitToDisplay(dataValue);
 
             // Handle if inserted a number on top of result
         } else if (dataValue != "." && displayElem.innerHTML === historyDisplay.innerHTML){
             clearDisplay();
             displayElem.innerHTML = "";
-            startDisplay(dataValue);
-        } else {
             addDigitToDisplay(dataValue);
-            console.log(displayElem.innerHTML);
-        }        
-            
+        } else {
+            addDigitToDisplay(dataValue);            
+        }           
     });
 });
 
@@ -84,9 +68,9 @@ operatorsElementList.forEach(button => {
 
         const operator = button.getAttribute("data-operator");       
 
-        if ( !operatorsList.includes(lastDigitInserted) ){
+        // Check if the last input was not an operator
+        if ( !operatorsList.includes(lastDigitInserted) ){ 
 
-            
             // If there are already an operation in curse waiting, calculate the first, show result on historic and start new operation on top of the previous result
             if (currentOperator){
                 let preResult = calculate(currentOperator);
@@ -108,20 +92,18 @@ operatorsElementList.forEach(button => {
                 displayElem.innerHTML = 0;
                 document.getElementById("point").disabled = false;
             }
-
+        
+        // If last input was an operator, replace that operator for the new operator
         } else {
-            historyDisplay.innerHTML = historyDisplay.innerHTML.slice(0, (historyDisplay.innerHTML.length -1)) + operator;
-            console.log(historyDisplay.innerHTML);
+            historyDisplay.innerHTML = historyDisplay.innerHTML.slice(0, -1) + operator;
             currentOperator = operator;
         }
-        console.log(lastDigitInserted);
         lastDigitInserted = operator;
     })
 });
 
 ////////////// Calculate
 equals.addEventListener("click", function() {
-    console.log(currentOperator)
     if (currentOperator){    
         calculate(currentOperator);
     } else {
@@ -130,53 +112,36 @@ equals.addEventListener("click", function() {
 });
 
 function calculate(){
-    console.log(currentOperator)
-    let parcel = historyDisplay.innerHTML.slice(0, (historyDisplay.innerHTML.length - 1));
+    let parcel = historyDisplay.innerHTML.slice(0, -1); // all digits excluding the last which is the operator
     let result = 0;
-    console.log(parcel)
-    console.log(currentOperator)
-    console.log(displayElem.innerHTML)
-
-
         switch (currentOperator) {
             case "+":
                 result = parseFloat(parcel) + parseFloat(displayElem.innerHTML);
-                handleResult(result);
                 break;
             case "*":
                 result = parseFloat(parcel) * parseFloat(displayElem.innerHTML);
-                handleResult(result);
                 break;
-
             case "/":
                 result = parseFloat(parcel) / parseFloat(displayElem.innerHTML);
-                handleResult(result);
                 break;
             default:
                 result = parseFloat(parcel) - parseFloat(displayElem.innerHTML);
-                handleResult(result);
                 break;
         }
+    handleResult(result);
     return result;
 }
 
-//////////////////////////// handle backspace and clear    
+//////////////////////////// handle backspace and AC    
 allClearBtn.addEventListener("click", function() {
    clearDisplay();
-   displayElem.innerHTML = 0;
 });
 
 backspaceBtn.addEventListener("click", function() {
-        // remove last inserted digit
-        displayElem.innerHTML = displayElem.innerHTML.slice(0, (displayElem.innerHTML.length - 1));
-
-        if ( displayElem.innerHTML.length < 1 ) {
-
-            if ( historyDisplay.innerHTML.length > 0 ) {
-                displayElem.innerHTML = 0;
-            } else{
-                clearDisplay();
-            }
+        if ( displayElem.innerHTML.length > 1 ) {
+            displayElem.innerHTML = displayElem.innerHTML.slice(0, -1);
+        } else {
+            displayElem.innerHTML = 0;
         }
 });
 
@@ -190,10 +155,17 @@ function clearDisplay() {
 };
 
 function handleResult(result){
-    displayElem.innerHTML = result;
-    historyDisplay.innerHTML = displayElem.innerHTML;
+
+    if ( ! isFinite(result) ){
+        displayElem.innerHTML = "Error";
+        historyDisplay.innerHTML = 0;
+    } else {
+        displayElem.innerHTML = result;
+        historyDisplay.innerHTML = displayElem.innerHTML;
+    };
+    
     historyDisplay.classList.add("hidden");
     currentOperator = "";
     document.getElementById("point").disabled = false;
     backspaceBtn.disabled = true;
-}
+};
