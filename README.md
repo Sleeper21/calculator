@@ -1,4 +1,9 @@
-My first Calculator. 
-Vanilla Javascript
+My first Calculator.
+No tutorials watched, have a feeling that i overcoded some logics but i will look into this later in my journey to see. 
 
-//// keyboard press interaction next ////
+Objective: Practice Vanilla Javascript
+
+Mouse click and keydown triggers.
+Tried to handle multiple hedge cases.
+
+![calculator preview](/images/image.png)
